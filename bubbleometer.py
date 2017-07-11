@@ -11,10 +11,17 @@ import _thread
 import matplotlib.pyplot as plt
 import matplotlib.animation as anim
 from time import sleep
+from collections import deque
 
 data = []
 bubbles = []
-CHUNK=1024
+CHUNK=1024*4
+
+from scipy import signal
+
+
+import matplotlib.pyplot as plt
+
 
 flatten = lambda l: [item for sublist in l for item in sublist]
 
@@ -42,8 +49,14 @@ stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
 
 olddatax = []
 olddatay = []
+rows = 0
+
+def autocorr(x):
+    result = np.correlate(x, x, mode='full')
+    return result[int(result.size/2):]
 
 def update(newdata):
+    global rows
     olddatax.append(newdata[0])
     olddatay.append(newdata[1])
     #ax.set_ylim(0,max(olddata))
@@ -51,7 +64,7 @@ def update(newdata):
     xx = flatten(olddatax)
     yy = flatten(olddatay)
 
-    ax.set_xlim(0, int(len(xx)*1.2))
+    ax.set_xlim(0, rows)
     
     my = 0
     if len(yy) == 0:
@@ -66,31 +79,78 @@ def update(newdata):
 
 
 def data_gen():
+    global rows
     count = 0
     data = wf.readframes(CHUNK)
+
+    allchunks = []
+
+    allallmags = deque(maxlen=10)
+
     while data != '':
         
-        s = np.frombuffer(data,dtype="<i2") 
-        stream.write(data)
-        data = wf.readframes(CHUNK)
+        s = np.frombuffer(data,dtype="<i2")
+
+        """ 
+        for v in s:
+            allchunks.append(v)
         
+
+        sig = allchunks
+        autocorr = signal.fftconvolve(sig, sig[::-1], mode='full')
+
+        fig, (ax_orig, ax_mag) = plt.subplots(2, 1)
+        ax_orig.plot(sig)
+        ax_orig.set_title('White noise')
+        ax_mag.plot(np.arange(-len(sig)+1,len(sig)), autocorr)
+        ax_mag.set_title('Autocorrelation')
+        fig.tight_layout()
+        fig.show()
+        """
+
+        """c = autocorr(allchunks)
+
+        fig2, ax2 = plt.subplots()
+        l2, = ax2.plot(range(len(c)),c, 'r-')
+        fig2.show()
+        """
+         
+        #stream.write(data)
+        data = wf.readframes(CHUNK)
+        rows += 1
         fft = np.fft.fft(s)
 
         fft = fft[0:int(len(fft)/2)]
 
         mags = []  
         magsl = []   
+
+        allmags = []
                                                                
         c = 0                                                                        
         for v in fft:                                                                                                      
-            mag = np.sqrt((v.real**2)+(v.imag**2))   
+            mag = np.sqrt((v.real**2)+(v.imag**2))  
+            allmags.append(mag) 
 
-            if mag > 40000:
+            if mag > 20000:
                 mags.append(count)
                 magsl.append(c)                                
                 #mags.append(mag)                                                     
             c += 1                  
         count +=1
+
+        """
+        allallmags.append(allmags)
+
+        o = None
+        for al in allallmags:
+            for al2 in allallmags:   
+                if al != al2:          
+                    c = np.corrcoef(al,al2)[0][1]
+                    print(c)
+        """
+
+        #print("----------")
         """
         print(np.sort(mags)[::-1][0])                          
                      
