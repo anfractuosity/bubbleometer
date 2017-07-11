@@ -27,6 +27,7 @@ p = pyaudio.PyAudio()
 wf = wave.open(sys.argv[1], 'rb')
 print("chans ",wf.getnchannels())
 
+## Open wav file
 stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
                 channels=wf.getnchannels(),
                 rate=wf.getframerate(),
@@ -36,6 +37,7 @@ olddatax = []
 olddatay = []
 rows = 0
 
+## Plot data on the graph
 def update(newdata):
 
     global rows
@@ -60,6 +62,7 @@ def update(newdata):
     return l,
 
 
+## Generate data for the graph
 def data_gen():
     global rows
     count = 0
@@ -100,9 +103,10 @@ def data_gen():
 
         yield [ mags , magsl ]
 
+## Use animation, so we get a live graph
 ani = anim.FuncAnimation(fig, update, data_gen,interval=100,blit=True)
 plt.show()
 
-
+## Need to keep main thread alive
 while True:
     sleep(1)
