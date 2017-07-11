@@ -64,13 +64,12 @@ def update(newdata):
 def data_gen():
     
     global rows
-    count = 0
     data = wf.readframes(CHUNK)
 
     while data != '':
         
         s = np.frombuffer(data,dtype="<i2")
-        # play audio
+        ## play audio
         #stream.write(data)
         data = wf.readframes(CHUNK)
         
@@ -79,6 +78,7 @@ def data_gen():
 
         mags = []  
         magsl = []   
+
         c = 0                                                                        
         
         for v in fft:                                                                                                      
