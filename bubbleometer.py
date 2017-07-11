@@ -20,6 +20,9 @@ data = []
 bubbles = []
 CHUNK=1024*4
 
+
+flatten = lambda l: [item for sublist in l for item in sublist] 
+
 fig, ax = plt.subplots()
 l, = ax.plot([], [], 'bo')
 p = pyaudio.PyAudio()
