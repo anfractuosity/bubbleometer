@@ -20,17 +20,14 @@ data = []
 bubbles = []
 CHUNK=1024*4
 
-
 flatten = lambda l: [item for sublist in l for item in sublist] 
 
 fig, ax = plt.subplots()
 l, = ax.plot([], [], 'bo')
+
+# Start pyaudio and load wav
 p = pyaudio.PyAudio()
-
 wf = wave.open(sys.argv[1], 'rb')
-print("chans ",wf.getnchannels())
-
-## Open wav file
 stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
                 channels=wf.getnchannels(),
                 rate=wf.getframerate(),
@@ -84,8 +81,8 @@ def data_gen():
 
         data = wf.readframes(CHUNK)
         rows += 1
+        
         fft = np.fft.fft(s)
-
         fft = fft[0:int(len(fft)/2)]
 
         mags = []  
@@ -100,7 +97,8 @@ def data_gen():
 
             if mag > 20000:
                 mags.append(count)
-                magsl.append(c)                                                                                  
+                magsl.append(c)   
+                                                                               
             c += 1                  
         count +=1
 
