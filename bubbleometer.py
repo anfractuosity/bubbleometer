@@ -41,10 +41,8 @@ rows = 0
 def update(newdata):
 
     global rows
-
     olddatax.append(newdata[0])
     olddatay.append(newdata[1])
-
     xx = flatten(olddatax)
     yy = flatten(olddatay)
 
@@ -64,43 +62,33 @@ def update(newdata):
 
 ## Generate data for the graph
 def data_gen():
+    
     global rows
     count = 0
     data = wf.readframes(CHUNK)
 
-    allchunks = []
-
-    allallmags = deque(maxlen=10)
-
     while data != '':
         
         s = np.frombuffer(data,dtype="<i2")
-
         # play audio
         #stream.write(data)
-
         data = wf.readframes(CHUNK)
-        rows += 1
         
         fft = np.fft.fft(s)
         fft = fft[0:int(len(fft)/2)]
 
         mags = []  
         magsl = []   
-
-        allmags = []
-                                                               
         c = 0                                                                        
+        
         for v in fft:                                                                                                      
             mag = np.sqrt((v.real**2)+(v.imag**2))  
-            allmags.append(mag) 
-
             if mag > 20000:
-                mags.append(count)
+                mags.append(rows)
                 magsl.append(c)   
                                                                                
             c += 1                  
-        count +=1
+        rows += 1
 
         yield [ mags , magsl ]
 
