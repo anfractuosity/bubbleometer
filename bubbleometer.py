@@ -1,4 +1,5 @@
 #!/usr/bin/python3 
+
 import pyaudio
 import wave
 import sys
@@ -6,19 +7,18 @@ import struct
 import numpy as np
 import time
 import glob
-import matplotlib.pyplot as plt
 import _thread
+
 import matplotlib.pyplot as plt
 import matplotlib.animation as anim
+
 from time import sleep
 from collections import deque
 from scipy import signal
-import matplotlib.pyplot as plt
 
 data = []
 bubbles = []
 CHUNK=1024*4
-flatten = lambda l: [item for sublist in l for item in sublist]
 
 fig, ax = plt.subplots()
 l, = ax.plot([], [], 'bo')
