@@ -24,11 +24,11 @@ import datetime as dt
 
 from multiprocessing import Process, Queue
 
-data = []
-bubbles = []
+# Audio chunk size
 CHUNK=1024*2
 
-bval = 200
+# Number of CPU cores to use
+CORES=8
 
 # Try to remove false bubbles
 def remove(ny):
@@ -108,6 +108,7 @@ data = {}
 
 lines = []
 
+# Load file with timestamp data
 with open('txt') as fin:
     for line in fin: 
         v = line.split(",")
@@ -117,6 +118,7 @@ with open('txt') as fin:
 
 c = 1
 
+# Spawn processes to process each wav file
 for l in lines:
 
     p = Process(target=process, args=(l[0],l[1],q,))
@@ -124,7 +126,7 @@ for l in lines:
     p.start()
 
     print("starting")
-    if len(plist) == 8 or c == len(lines):
+    if len(plist) == CORES or c == len(lines):
         for p in plist:
             job = q.get()
             data[job[2]] = ( job[0] , job[1] )
@@ -137,10 +139,9 @@ for l in lines:
 y = []
 x = []
 
+# Sort data from the multiple processes
 od = collections.OrderedDict(sorted(data.items()))
-
 for k, v in od.items():
-    print (k)
     for val in range(0,len(v[0])):
         x.append(v[0][val])
         y.append(v[1][val])
@@ -154,6 +155,7 @@ count = 0
 
 tval = x[0]
 
+# Extract bubbles per minute data
 for i in range(0,len(x)):
 
     if y[i] == 1:
@@ -165,18 +167,18 @@ for i in range(0,len(x)):
         tval = x[i]
         count = 0
 
-fig2 = plt.figure()
-ax4 = fig2.add_subplot(111)
+fig = plt.figure()
+ax = fig.add_subplot(111)
 secs = mdate.epoch2num(newx)
 
-ax4.plot_date(secs,newy,'r-')
-#ax4.plot_date(secs,scipy.ndimage.filters.gaussian_filter1d(newy,3.0),'b-')
+ax.plot_date(secs,newy,'r-')
+#ax.plot_date(secs,scipy.ndimage.filters.gaussian_filter1d(newy,3.0),'b-')
 yhat = signal.savgol_filter(newy, 51, 3) # window size 51, polynomial order 3
-ax4.plot_date(secs,yhat,'b-')
+ax.plot_date(secs,yhat,'b-')
 
 date_fmt = '%d-%m-%y %H:%M:%S'
 date_formatter = mdate.DateFormatter(date_fmt)
-ax4.xaxis.set_major_formatter(date_formatter)
-fig2.autofmt_xdate()
+ax.xaxis.set_major_formatter(date_formatter)
+fig.autofmt_xdate()
 plt.show()
 
