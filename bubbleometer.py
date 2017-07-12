@@ -55,14 +55,14 @@ def remove(ny):
     return ny
 
 # Generate data for the graph
-def data_gen(ff):
-    wf2 = wavfile.read(ff)
-    d = wf2[1]
-   
+def data_gen(filename):
+
+    wav = wavfile.read(filename)[1]
     r = 0
 
-    while True: 
-        data = d[r:r+CHUNK]
+    while True:
+ 
+        data = wav[r:r+CHUNK]
 
         if len(data) != CHUNK:
             break
@@ -70,36 +70,38 @@ def data_gen(ff):
         fft = np.fft.fft(data)
         fft = np.abs(fft[0:int(len(fft)/2)])
 
-        magsl = []   
+        mags = []   
         c = 0                                                                        
         
         for v in fft:                                                                                                      
             if v > 20000:
-                magsl.append(c)   
+                mags.append(c)   
             c += 1 
                  
         r += CHUNK
 
-        yield magsl 
+        yield mags
 
 q = Queue()
 plist = []
 
-def process(wfile,ep,q):
+def process(filename,epoch,q):
     
-    ny = []
-    xx = []
+    y = []
+    x = []
     i=1
 
-    for v in data_gen(wfile):
+    for v in data_gen(filename):
+
         if len(v) > 70:
-            ny.append(1)
+            y.append(1)
         else: 
-            ny.append(0)
-        xx.append((ep-(60*60))+((CHUNK/48e3)*i))
+            y.append(0)
+
+        x.append((epoch-(60*60))+((CHUNK/48e3)*i))
         i+=1
     
-    q.put((xx,ny,ep))
+    q.put((x,y,epoch))
 
 
 data = {}
