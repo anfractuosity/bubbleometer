@@ -74,7 +74,7 @@ def data_gen(filename):
         c = 0                                                                        
         
         for v in fft:                                                                                                      
-            if v > 20000:
+            if v > 40000:
                 mags.append(c)   
             c += 1 
                  
@@ -93,7 +93,7 @@ def process(filename,epoch,q):
 
     for v in data_gen(filename):
 
-        if len(v) > 70:
+        if len(v) > 24 and max(v) > 50:
             y.append(1)
         else: 
             y.append(0)
@@ -134,6 +134,7 @@ for l in lines:
             p.join()
         plist = []
         q = Queue()
+
     c += 1
 
 y = []
@@ -167,18 +168,32 @@ for i in range(0,len(x)):
         tval = x[i]
         count = 0
 
+font = {'family' : 'normal',
+        'weight' : 'bold',
+        'size'   : 22}
+
+matplotlib.rc('font', **font)
+
 fig = plt.figure()
 ax = fig.add_subplot(111)
 secs = mdate.epoch2num(newx)
-
 ax.plot_date(secs,newy,'r-')
-#ax.plot_date(secs,scipy.ndimage.filters.gaussian_filter1d(newy,3.0),'b-')
-yhat = signal.savgol_filter(newy, 51, 3) # window size 51, polynomial order 3
-ax.plot_date(secs,yhat,'b-')
 
 date_fmt = '%d-%m-%y %H:%M:%S'
 date_formatter = mdate.DateFormatter(date_fmt)
 ax.xaxis.set_major_formatter(date_formatter)
 fig.autofmt_xdate()
+
+
+print(len(newy),len(newx))
+
+fig2 = plt.figure()
+ax2 = fig2.add_subplot(111)
+yhat = signal.savgol_filter(newy, 31, 3) # window size 51, polynomial order 3
+
+ax2.plot_date(secs,yhat,'b-')
+ax2.xaxis.set_major_formatter(date_formatter)
+fig2.autofmt_xdate()
+
 plt.show()
 
