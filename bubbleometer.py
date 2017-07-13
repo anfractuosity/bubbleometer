@@ -184,12 +184,9 @@ date_formatter = mdate.DateFormatter(date_fmt)
 ax.xaxis.set_major_formatter(date_formatter)
 fig.autofmt_xdate()
 
-
-print(len(newy),len(newx))
-
 fig2 = plt.figure()
 ax2 = fig2.add_subplot(111)
-yhat = signal.savgol_filter(newy, 31, 3) # window size 51, polynomial order 3
+yhat = signal.savgol_filter(newy, 31, 3) # window size 31, polynomial order 3
 
 ax2.plot_date(secs,yhat,'b-')
 ax2.xaxis.set_major_formatter(date_formatter)
