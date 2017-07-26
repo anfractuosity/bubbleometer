@@ -56,11 +56,7 @@ def process(filename,epoch,q):
     i=1
 
     for v in data_gen(filename):
-        if len(v) > 24 and max(v) > 50:
-            y.append(1)
-        else: 
-            y.append(0)
-
+        y.append(fft_decide(v))
         x.append((epoch-(60*60))+((CHUNK/48e3)*i))
         i+=1
     
@@ -101,7 +97,7 @@ for k, v in od.items():
         x.append(v[0][val])
         y.append(v[1][val])
 
-y = remove(y)
+y = remove_break(y)
 
 newx,newy = getbubblesperminute(x,y)
 graphit(newx,newy)

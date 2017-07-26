@@ -105,6 +105,7 @@ def remove_break(data):
     zcount = 0
     idx = -1
     i = 0
+    breakval = 10
 
     for v in data:
         if v == 0 :
@@ -119,7 +120,7 @@ def remove_break(data):
                 idx = i
         else:
 
-            if zcount > 10:
+            if zcount > breakval:
                for zz in range(idx,idx+zcount):
                     data[zz] = 2                
 
@@ -231,6 +232,11 @@ def fft_process(data,count):
 
     return mags , magsl
 
+def fft_decide(v):
+    if len(v) > 24 and max(v) > 50:
+        return 1
+    else:
+        return 0
 
 def parzen(x,data):
     sig = 5.0

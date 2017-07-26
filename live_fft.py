@@ -63,13 +63,10 @@ def update(newdata):
 
     c = 0
     for v in olddatay:
-
-        if len(v) > 24 and max(v) > 50:
-            newy.append(1)
-        else: 
-            newy.append(0)
+        newy.append(fft_decide(v))
         newx.append(c)
         c=c+1
+
     ax2.set_ylim(0,1)
     l2.set_xdata(newx)
     l2.set_ydata(remove_break(newy))
