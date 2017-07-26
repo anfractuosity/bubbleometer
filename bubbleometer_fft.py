@@ -109,12 +109,12 @@ data = {}
 lines = []
 
 # Load file with timestamp data
-with open('txt') as fin:
+with open('wav/txt') as fin:
     for line in fin: 
         v = line.split(",")
         ep = int(v[0])
         wfile = v[1][1:-2]
-        lines.append((wfile,ep))
+        lines.append(("wav/"+wfile,ep))
 
 c = 1
 

@@ -1,3 +1,5 @@
+tmp/
 train/
+wav/
 *.wav
 *.mkv
