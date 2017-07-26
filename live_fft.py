@@ -72,7 +72,7 @@ def update(newdata):
         c=c+1
     ax2.set_ylim(0,1)
     l2.set_xdata(newx)
-    l2.set_ydata(remove(newy))
+    l2.set_ydata(remove_break(newy))
     return l,l2,
 
 def data_gen():

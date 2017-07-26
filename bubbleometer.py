@@ -223,7 +223,7 @@ def fft_process(data,count):
     c = 0                                                                        
         
     for v in fft:                                                                                                      
-        if v > 40000:
+        if v > 30000:
             mags.append(c)  
             magsl.append(count)  
         c += 1 
