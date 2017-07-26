@@ -9,6 +9,27 @@ import scipy.signal as signal
 
 flatten = lambda l: [item for sublist in l for item in sublist]
 
+def getbubblesperminute(x,y):
+
+    newy = []
+    newx = []
+    count = 0
+    tval = x[0]
+
+    # Extract bubbles per minute data
+    for i in range(0,len(x)):
+
+        if y[i] == 1:
+            count += 1
+
+        if x[i] > tval + (60):
+            newy.append(count)
+            newx.append(tval)
+            tval = x[i]
+            count = 0
+
+    return newx, newy
+
 # Generate graphs of bubbles / min against time
 def graphit(newx,newy):
 

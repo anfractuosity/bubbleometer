@@ -118,27 +118,5 @@ for k, v in od.items():
         y.append(v[1][val])
 
 y = remove_break(y)
-
-newy = []
-newx = []
-
-count = 0
-
-tval = x[0]
-
-err = False
-oldi = 0
-# Extract bubbles per minute data
-for i in range(0,len(x)):
-
-    if y[i] == 1:
-        count += 1
-
-    if x[i] > tval + (60):
-        newy.append(count)
-        newx.append(tval)
-        tval = x[i]
-        count = 0
-        oldi = i
-
+newx,newy = getbubblesperminute(x,y)
 graphit(newx,newy)
