@@ -34,7 +34,7 @@ def process(filename,epoch,q):
     i=1
     bad = []
     wav = wavfile.read(filename)[1]
-    filt = filter_wav(wav)
+    filt,bp = filter_wav(wav)
     r = 0
 
     for d in range(0,len(filt),CHUNK):#window(y,CHUNK):

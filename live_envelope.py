@@ -33,7 +33,7 @@ l1, = ax1.plot([], [], 'r-')
 olddatax = []
 olddatay = []
 wav = wavfile.read(sys.argv[1])[1]
-y = filter_wav(wav)
+y,bp = filter_wav(wav)
 
 def update(newdata):
     

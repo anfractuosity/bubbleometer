@@ -90,7 +90,11 @@ def remove(ny):
                     if ny[i2] == 0:
                         zeroidx = i2
                         break
+
+            # Remove all but first 1
             zz = i+1
+
+            # If substantial amount of sequential 1's, remove all, as likely not a bubble
             if count > 7:
                 zz = i
 
@@ -290,16 +294,16 @@ def filter_wav(wav):
     lowcut = 800.0
     highcut = 3000.0
     bp = butter_bandpass_filter(wav, lowcut, highcut, fs, order=6)
-    b, a = butter(1,100.0/(0.5*48e3), 'low')
+    b, a = butter(1,0.125, 'low')
     filt = filtfilt(b, a, abs(bp))
-    return filt
+    return filt, bp
 
 # Get area under lowpass filter
 def integrate(data):
 
     integ = np.trapz(data)
         
-    if integ > 82000:
+    if integ > 89000:
         mags = 1
     else:
         mags = 0
