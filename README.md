@@ -28,3 +28,11 @@ Copy the file generated from timestamp_recordings.sh into the wav/ directory.
 
 Try bubbleometer_fft.py or bubbleometer_envelope.py to generate graphs.
 
+## To get correct dates from Matplotlib I had to create
+
+**.config/matplotlib/matplotlibrc**
+
+```
+backend      : Qt5Agg
+timezone     : Europe/London 
+```
