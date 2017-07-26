@@ -97,7 +97,7 @@ for k, v in od.items():
         x.append(v[0][val])
         y.append(v[1][val])
 
-y = remove_break(y)
+y = remove(y)
 
 newx,newy = getbubblesperminute(x,y)
 graphit(newx,newy)

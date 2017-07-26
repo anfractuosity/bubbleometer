@@ -247,7 +247,7 @@ def fft_process(data,count):
     c = 0                                                                        
         
     for v in fft:                                                                                                      
-        if v > 30000:
+        if v > 40000:
             mags.append(c)  
             magsl.append(count)  
         c += 1 
@@ -299,7 +299,7 @@ def integrate(data):
 
     integ = np.trapz(data)
         
-    if integ > 60000:
+    if integ > 82000:
         mags = 1
     else:
         mags = 0

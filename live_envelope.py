@@ -43,7 +43,7 @@ def update(newdata):
     ax1.set_xlim(0,newdata[1])
     
     l1.set_xdata(olddatax)
-    l1.set_ydata(remove_break(olddatay))
+    l1.set_ydata(remove(olddatay))
     
     return l1,
 
