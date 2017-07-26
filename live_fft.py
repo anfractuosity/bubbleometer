@@ -38,10 +38,6 @@ olddatax = []
 olddatay = []
 rows = 0
 
-def autocorr(x):
-    result = np.correlate(x, x, mode='full')
-    return result[int(result.size/2):]
-
 def update(newdata):
     global rows
     olddatax.append(newdata[0])
@@ -112,11 +108,8 @@ def data_gen():
 
         yield [ mags , magsl ]
 
-       
-
 ani = anim.FuncAnimation(f, update, data_gen,interval=0,blit=True)
 plt.show()
-
 
 while True:
     sleep(1)
