@@ -36,7 +36,6 @@ stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
 
 olddatax = []
 olddatay = []
-rows = 0
 
 def update(newdata):
     rows = newdata[2]
