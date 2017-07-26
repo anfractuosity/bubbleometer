@@ -76,15 +76,7 @@ def process(filename,epoch,q):
 
 data = {}
 
-lines = []
-
-# Load file with timestamp data
-with open('wav/txt') as fin:
-    for line in fin: 
-        v = line.split(",")
-        ep = int(v[0])
-        wfile = v[1][1:-2]
-        lines.append(("wav/"+wfile,ep))
+lines = timestampdata()
 
 c = 1
 
