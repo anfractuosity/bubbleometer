@@ -11,3 +11,17 @@ See https://www.anfractuosity.com/projects/bubbleometer/ for more information.
 * Numpy
 * Scipy
 * Pyaudio - for live graphing demos
+
+# Example
+
+## On the PC doing the recordings run:
+./record.sh
+./timestamp_recordings.sh
+
+## Once you have the recordings:
+
+Place .wav files in folder called wav/ in the same directory as these python scripts.
+Copy the file generated from timestamp_recordings.sh into the wav/ directory.
+
+Try bubbleometer_fft.py or bubbleometer_envelope.py to generate graphs.
+
