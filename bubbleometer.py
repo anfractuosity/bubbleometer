@@ -149,8 +149,8 @@ def remove_break(data):
             count = 0
             idx = -1
         i += 1
-        if i % 1000 == 0:
-            print((float(i)/len(nout))*100.0)
+        #if i % 1000 == 0:
+        #    print((float(i)/len(nout))*100.0)
 
     return new2
 
