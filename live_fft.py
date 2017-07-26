@@ -54,7 +54,7 @@ def update(newdata):
     else:
         my = max(yy)  
 
-    ax1.set_ylim(0, 1024)
+    ax1.set_ylim(0, CHUNK/2)
     l.set_xdata(xx)
     l.set_ydata(yy)
     

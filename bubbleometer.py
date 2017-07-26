@@ -10,7 +10,7 @@ from scipy.signal import filtfilt
 
 flatten = lambda l: [item for sublist in l for item in sublist]
 
-
+# Load timestamp data generated using timestamp_recordings.sh
 def timestampdata():
     lines = []
 
@@ -24,6 +24,7 @@ def timestampdata():
 
     return lines
 
+# Obtain bubbles per minute data
 def getbubblesperminute(x,y):
 
     newy = []
@@ -216,6 +217,27 @@ def remove_old(data):
 
     return new2
 
+# Used by above guassian kernel function to convert bubble data into numeric time-series style values
+def convn(data):
+    d = []
+
+    for i in range(len(data)):
+        if data[i] == 1:
+            d.append(i)
+        
+    return d
+
+# Used by above gaussian kernel function, to filter data
+def rm(density,rmq,v,idv):
+    nout = []
+    for i in v:
+        if density(i) > 0.00001:
+            nout.append(1)
+        else:
+            nout.append(0)
+    rmq.put((idv,nout))
+
+# Process audio data using FFT
 def fft_process(data,count):
     fft = np.fft.fft(data)
     fft = np.abs(fft[0:int(len(fft)/2)])
@@ -232,12 +254,14 @@ def fft_process(data,count):
 
     return mags , magsl
 
+# Decide if it's a bubble or not
 def fft_decide(v):
     if len(v) > 24 and max(v) > 50:
         return 1
     else:
         return 0
 
+# Created to play with as an alternative to numpys guassian kernel
 def parzen(x,data):
     sig = 5.0
     a = 1.0/(float(len(data)*((2*np.pi)**0.5)*sig))
@@ -245,31 +269,6 @@ def parzen(x,data):
     for v in data:
         b+=math.exp(-((x-v)**2/(2*sig**2)))
     return a * b
-
-def window(iterable, size):
-    iters = tee(iterable, size)
-    for i in range(1, size):
-        for each in iters[i:]:
-            next(each, None)
-    return zip(*iters)
-
-def convn(data):
-    d = []
-
-    for i in range(len(data)):
-        if data[i] == 1:
-            d.append(i)
-        
-    return d
-
-def rm(density,rmq,v,idv):
-    nout = []
-    for i in v:
-        if density(i) > 0.00001:
-            nout.append(1)
-        else:
-            nout.append(0)
-    rmq.put((idv,nout))
 
 # From https://stackoverflow.com/questions/12093594/how-to-implement-band-pass-butterworth-filter-with-scipy-signal-butter
 def butter_bandpass(lowcut, highcut, fs, order=5):
@@ -285,6 +284,7 @@ def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
     y = lfilter(b, a, data)
     return y
 
+# Bandpass filter of data, then use lowpass filter to get envelope
 def filter_wav(wav):
     fs = 48000.0
     lowcut = 800.0
@@ -294,6 +294,7 @@ def filter_wav(wav):
     filt = filtfilt(b, a, abs(bp))
     return filt
 
+# Get area under lowpass filter
 def integrate(data):
 
     integ = np.trapz(data)
