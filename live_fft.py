@@ -40,8 +40,8 @@ rows = 0
 
 def update(newdata):
     rows = newdata[2]
-    olddatax.append(newdata[0])
-    olddatay.append(newdata[1])
+    olddatax.append(newdata[1])
+    olddatay.append(newdata[0])
 
     xx = flatten(olddatax)
     yy = flatten(olddatay)

@@ -224,8 +224,8 @@ def fft_process(data,count):
         
     for v in fft:                                                                                                      
         if v > 40000:
-            mags.append(count)  
-            magsl.append(c)  
+            mags.append(c)  
+            magsl.append(count)  
         c += 1 
 
     return mags , magsl

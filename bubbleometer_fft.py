@@ -44,13 +44,10 @@ def data_gen(filename):
         if len(data) != CHUNK:
             break
         
-        mags,magsl  = fft_process(data,0)             
+        mags,magsl = fft_process(data,0)             
         r += CHUNK
 
         yield mags
-
-q = Queue()
-plist = []
 
 def process(filename,epoch,q):
     
@@ -59,7 +56,6 @@ def process(filename,epoch,q):
     i=1
 
     for v in data_gen(filename):
-
         if len(v) > 24 and max(v) > 50:
             y.append(1)
         else: 
@@ -70,11 +66,10 @@ def process(filename,epoch,q):
     
     q.put((x,y,epoch))
 
-
+q = Queue()
+plist = []
 data = {}
-
 lines = timestampdata()
-
 c = 1
 
 # Spawn processes to process each wav file
@@ -107,5 +102,6 @@ for k, v in od.items():
         y.append(v[1][val])
 
 y = remove(y)
+
 newx,newy = getbubblesperminute(x,y)
 graphit(newx,newy)
