@@ -1,6 +1,10 @@
 import numpy as np
+from itertools import tee
+from scipy.signal import butter, lfilter
 
-# Try to remove false bubbles
+flatten = lambda l: [item for sublist in l for item in sublist]
+
+# Try to remove false bubbles, remove continous 1s and pick first
 def remove(ny):
     for i in range(0,len(ny)):
         zeroidx = -1
@@ -21,8 +25,123 @@ def remove(ny):
                 ny[i2] = 0
             
             i = zeroidx
-
     return ny
+
+# Try to remove false bubbles using simple 'break' detection
+def remove_break(data):
+
+    zcount = 0
+    idx = -1
+    i = 0
+
+    for v in data:
+        if v == 0 :
+            zcount += 1
+
+            if i == len(data)-1:
+
+                for zz in range(idx,idx+zcount):
+                    data[zz] = 2    
+
+            if idx == -1:
+                idx = i
+        else:
+
+            if zcount > 10:
+               for zz in range(idx,idx+zcount):
+                    data[zz] = 2                
+
+            zcount = 0
+            idx = -1
+        i+=1
+
+    for i in range(0,len(data)):
+        if data[i] == 2:
+            data[i] = 0
+        else:
+            data[i] = 1
+    nout = data
+
+    new2 = np.zeros(len(nout))
+    count = 0
+    idx = -1
+    i = 0
+
+    for v in nout:
+        if v == 1:
+            if idx == -1:
+                idx = i
+            count += 1
+        else:
+            if not idx == -1:
+                new2[int((idx + (float(count)/2.0)))] = 1
+            count = 0
+            idx = -1
+        i += 1
+        if i % 1000 == 0:
+            print((float(i)/len(nout))*100.0)
+
+    return new2
+
+# Try to remove false bubbles using gaussian kernel
+def remove_old(data):
+    new = convn(data)
+    nout = []
+    density = stats.gaussian_kde(new) # x: list of price
+    density.set_bandwidth(bw_method=0.000001)
+
+    datah = {}
+    rmq = Queue()
+    rmlist = []
+    arrs = np.array_split(np.array(range(0,len(data))),8)
+
+    idv = 0
+    for v in arrs:
+        print("spawning")
+        p = Process(target=rm, args=(density,rmq,v,idv))
+        rmlist.append(p)
+        p.start()
+        idv += 1
+
+    for p in rmlist:
+        job = rmq.get()
+        datah[job[0]] = job[1]
+    for p in rmlist:
+        p.join()
+
+    # Sort data from the multiple processes
+    nnout = []
+    od = collections.OrderedDict(sorted(datah.items()))
+    for k, v in od.items():
+        print(k)
+        nnout.append(v)
+
+    nout = flatten(nnout)
+
+    count = 0
+    idx = -1
+    i = 0
+
+    new2 = np.zeros(len(nout))
+
+    for v in nout:
+
+        if v == 1:
+
+            if idx == -1:
+                idx = i
+
+            count += 1
+        else:
+            if not idx == -1:
+                new2[int((idx + (float(count)/2.0)))] = 1
+
+            count = 0
+            idx = -1
+
+        i += 1
+
+    return new2
 
 def fft_process(data,count):
     fft = np.fft.fft(data)
@@ -39,3 +158,50 @@ def fft_process(data,count):
         c += 1 
 
     return mags , magsl
+
+
+def parzen(x,data):
+    sig = 5.0
+    a = 1.0/(float(len(data)*((2*np.pi)**0.5)*sig))
+    b = 0.0
+    for v in data:
+        b+=math.exp(-((x-v)**2/(2*sig**2)))
+    return a * b
+
+def window(iterable, size):
+    iters = tee(iterable, size)
+    for i in range(1, size):
+        for each in iters[i:]:
+            next(each, None)
+    return zip(*iters)
+
+def convn(data):
+    d = []
+
+    for i in range(len(data)):
+        if data[i] == 1:
+            d.append(i)
+        
+    return d
+
+def rm(density,rmq,v,idv):
+    nout = []
+    for i in v:
+        if density(i) > 0.00001:
+            nout.append(1)
+        else:
+            nout.append(0)
+    rmq.put((idv,nout))
+
+# From https://stackoverflow.com/questions/12093594/how-to-implement-band-pass-butterworth-filter-with-scipy-signal-butter
+def butter_bandpass(lowcut, highcut, fs, order=5):
+    nyq = 0.5 * fs
+    low = lowcut / nyq
+    high = highcut / nyq
+    b, a = butter(order, [low, high], btype='band')
+    return b, a
+
+def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
+    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
+    y = lfilter(b, a, data)
+    return y
