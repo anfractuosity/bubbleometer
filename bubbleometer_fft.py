@@ -135,29 +135,4 @@ for i in range(0,len(x)):
         tval = x[i]
         count = 0
 
-font = {'family' : 'normal',
-        'weight' : 'bold',
-        'size'   : 22}
-
-matplotlib.rc('font', **font)
-
-fig = plt.figure()
-ax = fig.add_subplot(111)
-secs = mdate.epoch2num(newx)
-ax.plot_date(secs,newy,'r-')
-
-date_fmt = '%d-%m-%y %H:%M:%S'
-date_formatter = mdate.DateFormatter(date_fmt)
-ax.xaxis.set_major_formatter(date_formatter)
-fig.autofmt_xdate()
-
-fig2 = plt.figure()
-ax2 = fig2.add_subplot(111)
-yhat = signal.savgol_filter(newy, 31, 3) # window size 31, polynomial order 3
-
-ax2.plot_date(secs,yhat,'b-')
-ax2.xaxis.set_major_formatter(date_formatter)
-fig2.autofmt_xdate()
-
-plt.show()
-
+graphit(newx,newy)

@@ -9,18 +9,12 @@ import glob
 import _thread
 import random
 
-from matplotlib.pylab import *
-import matplotlib.pyplot as plt
-import matplotlib.animation as anim
-
 from time import sleep
 from collections import deque
 
-import scipy.signal as signal
 import scipy.io.wavfile as wavfile
 import collections
-import matplotlib.dates as mdate
-import datetime as dt
+
 from scipy.signal import hilbert
 from scipy.signal import filtfilt
 
@@ -147,29 +141,4 @@ for i in range(0,len(x)):
         count = 0
         oldi = i
 
-font = {'family' : 'normal',
-        'weight' : 'bold',
-        'size'   : 22}
-
-matplotlib.rc('font', **font)
-
-fig = plt.figure()
-ax = fig.add_subplot(111)
-secs = mdate.epoch2num(newx)
-ax.plot_date(secs,newy,'r-')
-
-date_fmt = '%d-%m-%y %H:%M:%S'
-date_formatter = mdate.DateFormatter(date_fmt)
-ax.xaxis.set_major_formatter(date_formatter)
-fig.autofmt_xdate()
-
-fig2 = plt.figure()
-ax2 = fig2.add_subplot(111)
-yhat = signal.savgol_filter(newy, 11, 3) # window size 31, polynomial order 3
-
-ax2.plot_date(secs,yhat,'b-')
-ax2.xaxis.set_major_formatter(date_formatter)
-fig2.autofmt_xdate()
-
-plt.show()
-
+graphit(newx,newy)

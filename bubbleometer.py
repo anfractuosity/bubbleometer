@@ -1,8 +1,44 @@
 import numpy as np
 from itertools import tee
 from scipy.signal import butter, lfilter
+from matplotlib.pylab import *
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdate
+import datetime as dt
+import scipy.signal as signal
 
 flatten = lambda l: [item for sublist in l for item in sublist]
+
+# Generate graphs of bubbles / min against time
+def graphit(newx,newy):
+
+    # Enlarge font
+    font = {'family' : 'normal',
+        'weight' : 'bold',
+        'size'   : 22}
+    matplotlib.rc('font', **font)
+    
+    # Standard graph
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    secs = mdate.epoch2num(newx)
+    ax.plot_date(secs,newy,'r-')
+
+    date_fmt = '%d-%m-%y %H:%M:%S'
+    date_formatter = mdate.DateFormatter(date_fmt)
+    ax.xaxis.set_major_formatter(date_formatter)
+    fig.autofmt_xdate()
+
+    # Filtered graph
+    fig2 = plt.figure()
+    ax2 = fig2.add_subplot(111)
+    yhat = signal.savgol_filter(newy, 11, 3) # window size 31, polynomial order 3
+
+    ax2.plot_date(secs,yhat,'b-')
+    ax2.xaxis.set_major_formatter(date_formatter)
+    fig2.autofmt_xdate()
+
+    plt.show()
 
 # Try to remove false bubbles, remove continous 1s and pick first
 def remove(ny):
