@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdate
 import datetime as dt
 import scipy.signal as signal
+from scipy.signal import filtfilt
 
 flatten = lambda l: [item for sublist in l for item in sublist]
 
@@ -272,7 +273,29 @@ def butter_bandpass(lowcut, highcut, fs, order=5):
     b, a = butter(order, [low, high], btype='band')
     return b, a
 
+# From https://stackoverflow.com/questions/12093594/how-to-implement-band-pass-butterworth-filter-with-scipy-signal-butter
 def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
     b, a = butter_bandpass(lowcut, highcut, fs, order=order)
     y = lfilter(b, a, data)
     return y
+
+def filter_wav(wav):
+    fs = 48000.0
+    lowcut = 800.0
+    highcut = 3000.0
+    bp = butter_bandpass_filter(wav, lowcut, highcut, fs, order=6)
+    b, a = butter(1,100.0/(0.5*48e3), 'low')
+    filt = filtfilt(b, a, abs(bp))
+    return filt
+
+def integrate(data):
+
+    integ = np.trapz(data)
+        
+    if integ > 60000:
+        mags = 1
+    else:
+        mags = 0
+
+    return mags
+
