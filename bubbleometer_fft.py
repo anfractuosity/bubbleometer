@@ -44,17 +44,7 @@ def data_gen(filename):
         if len(data) != CHUNK:
             break
         
-        fft = np.fft.fft(data)
-        fft = np.abs(fft[0:int(len(fft)/2)])
-
-        mags = []   
-        c = 0                                                                        
-        
-        for v in fft:                                                                                                      
-            if v > 40000:
-                mags.append(c)   
-            c += 1 
-                 
+        mags,magsl  = fft_process(data,0)             
         r += CHUNK
 
         yield mags

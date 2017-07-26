@@ -39,9 +39,10 @@ olddatay = []
 rows = 0
 
 def update(newdata):
-    global rows
+    rows = newdata[2]
     olddatax.append(newdata[0])
     olddatay.append(newdata[1])
+
     xx = flatten(olddatax)
     yy = flatten(olddatay)
 
@@ -75,38 +76,18 @@ def update(newdata):
     return l,l2,
 
 def data_gen():
-    global rows
     count = 0
     data = wf.readframes(CHUNK)
-
-    allchunks = []
-
-    allallmags = deque(maxlen=10)
 
     while data != '':
         
         s = np.frombuffer(data,dtype="<i2")
         stream.write(data)
         data = wf.readframes(CHUNK)
-        rows += 1
-        fft = np.fft.fft(s)
-
-        fft = np.abs(fft[0:int(CHUNK/2)])
-
-        mags = []  
-        magsl = []   
-
-        allmags = []
-                                                               
-        c = 0                                                                        
-        for v in fft:                                                                                                      
-            if v > 20000:
-                mags.append(count)
-                magsl.append(c)                                
-            c += 1                  
+        mags , magsl = fft_process(s,count)   
         count +=1
 
-        yield [ mags , magsl ]
+        yield [ mags , magsl, count ]
 
 ani = anim.FuncAnimation(f, update, data_gen,interval=0,blit=True)
 plt.show()
